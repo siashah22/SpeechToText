@@ -3,57 +3,69 @@
 
 # In[ ]:
 
+#Converting .mp3 audio file to .wav file 
+import os
+import subprocess
 
-import speech_recognition as sr
-from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
-import torch
-import librosa
-import numpy as np
+mp3_file = r"C:\Users\Public\S2T\speech sample.mp3"
+wav_file = r"C:\Users\Public\S2T\speech sample.wav"
+ffmpeg_path = r"C:\Users\Siya\ffmpeg-2025-03-24-git-cbbc927a67-full_build\ffmpeg-2025-03-24-git-cbbc927a67-full_build\bin\ffmpeg.exe" # Change this to your actual FFmpeg path
+subprocess.run([ffmpeg_path, "-i", mp3_file, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav_file], shell=True)
 
-def transcribe_with_speechrecognition(audio_file):
-    """
-    Transcribe audio using the SpeechRecognition library.
-    """
-    recognizer = sr.Recognizer()
-    try:
-        with sr.AudioFile(audio_file) as source:
-            audio_data = recognizer.record(source)
-            text = recognizer.recognize_google(audio_data)
-            return text
-    except Exception as e:
-        return f"Error with SpeechRecognition: {e}"
 
-def transcribe_with_wav2vec(audio_file):
-    """
-    Transcribe audio using a pre-trained Wav2Vec 2.0 model.
-    """
-    try:
-        # Load pre-trained model and processor
-        model_name = "facebook/wav2vec2-base-960h"
-        processor = Wav2Vec2Processor.from_pretrained(model_name)
-        model = Wav2Vec2ForCTC.from_pretrained(model_name)
+if os.path.exists(wav_file):
+    print(f"✅ WAV file created successfully: {wav_file}")
+else:
+    print("❌ WAV file creation failed!")
 
-        # Load audio
-        audio, rate = librosa.load(audio_file, sr=16000)  # Ensure 16kHz sampling rate
-        input_values = processor(audio, return_tensors="pt", sampling_rate=rate).input_values
+#Loading the Vosk Model 
+import os
+from vosk import Model
 
-        # Perform transcription
-        logits = model(input_values).logits
-        predicted_ids = torch.argmax(logits, dim=-1)
-        transcription = processor.decode(predicted_ids[0])
+model_dir = r"C:\Users\Public\S2T\models\vosk-model-en-us-0.22\vosk-model-en-us-0.22"
 
-        return transcription
-    except Exception as e:
-        return f"Error with Wav2Vec: {e}"
+# Check if model directory exists
+if not os.path.exists(model_dir):
+    raise Exception("❌ Model directory not found! Check the path.")
 
-if __name__ == "__main__":
-    audio_path = r"C:\Users\Siya\OneDrive\Desktop\sample.wav"
+# Try to load the model
+try:
+    model = Model(model_dir)
+    print("✅ Vosk model loaded successfully!")
+except Exception as e:
+    print("❌ Error loading Vosk model:", e)
 
-    print("Transcription using SpeechRecognition:")
-    sr_transcription = transcribe_with_speechrecognition(audio_path)
-    print(sr_transcription)
 
-    print("\nTranscription using Wav2Vec:")
-    wav2vec_transcription = transcribe_with_wav2vec(audio_path)
-    print(wav2vec_transcription)
+#Transcribing the speech to text 
+import os
+import subprocess
+import wave
+import json
+from vosk import Model, KaldiRecognizer
+
+
+# Set paths to files
+mp3_file = r"C:\Users\Public\S2T\speech sample.mp3"  # Ensure the MP3 file is in the same directory as this script
+wav_file = r"C:\Users\Public\S2T\speech sample.wav"
+model_dir = r"C:\Users\Public\S2T\models\vosk-model-en-us-0.22\vosk-model-en-us-0.22" # Ensure the Vosk model is in "models/" folder
+
+def transcribe_audio(wav_path, model_dir):
+    """Transcribe WAV audio using Vosk (Offline)."""
+    model = Model(model_dir)
+    recognizer = KaldiRecognizer(model, 16000)
+
+    with wave.open(wav_path, "rb") as wf:
+        while True:
+            data = wf.readframes(4000)
+            if len(data) == 0:
+                break
+            recognizer.AcceptWaveform(data)
+
+        result = json.loads(recognizer.FinalResult())
+        return result["text"]
+
+# Transcribe audio offline
+transcription = transcribe_audio(wav_file, model_dir)
+print("Transcription:", transcription)
+
 
