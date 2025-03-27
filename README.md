@@ -1,34 +1,26 @@
 # SpeechToText
 
-**COMPANY** : CODTECH IT SOLUTIONS
-
-**NAME** : SIA SHAH
-
-**INTERN ID** : CT08JOP
-
-**DOMAIN NAME** : ARTIFICIAL INTELLIGENCE
-
-**BATCH DURATION** : JANUARY 6TH,2025 TO FEBRUARY 6TH,2025
-
-**MENTOR NAME** : NEELA SANTOSH
-
 # DESCRIPTION OF SPEECH TO TEXT TOOL 
 
 
-A **speech-to-text program** converts spoken language into written text using automatic speech recognition (ASR) technology. Here’s a brief breakdown:
+This program converts speech from an **MP3 file** to **text** using **Vosk**, an offline speech recognition library. The process is divided into two main steps:  
+1. **Audio Conversion** – Converts an **MP3 file** into a **WAV format** (16 kHz, mono) using **FFmpeg**.  
+2. **Speech Recognition** – Uses the **Vosk speech recognition model** to transcribe the WAV file into text without requiring an internet connection.  
 
-1. **Input:**
-   - The program takes audio input, typically in the form of a recorded voice or live speech.
-   
-2. **Processing:**
-   - The audio is processed to extract features such as speech patterns, frequency, and pitch.
-   - The audio is then converted into text using either machine learning models or predefined algorithms.
+## ** How It Works**  
 
-3. **Methods:**
-   - **SpeechRecognition Library:** This method uses APIs (like Google’s speech API) to transcribe speech. It's simple and works well for general purposes.
-   - **Wav2Vec 2.0 (Deep Learning):** A more advanced method based on deep learning. It uses pre-trained models to recognize speech with greater accuracy, particularly in noisy environments.
+### **Step 1: Convert MP3 to WAV**  
+- **How?** The program runs an **FFmpeg command** to convert the MP3 file into the correct format.  
 
-4. **Output:**
-   - The program outputs the transcribed text, which can then be used for further processing or analysis.
+### **Step 2: Perform Speech Recognition**  
+- The **Vosk model** is loaded from the specified path.  
+- The **KaldiRecognizer** processes the WAV file in small chunks to handle large files efficiently.  
+- The recognized text is extracted from the final result and displayed.  
 
-This process is useful in applications like transcription services, voice assistants, and accessibility tools for the hearing impaired.
+## **📌 Features**  
+✔ **Works offline** – No internet required for transcription.  
+✔ **High accuracy** – Uses Vosk’s optimized AI models.  
+✔ **Supports multiple languages** – Different language models can be used.  
+✔ **Lightweight** – Runs efficiently even on low-end devices.  
+
+Would you like additional details, such as **real-time speech recognition** from a microphone? 🎙️
