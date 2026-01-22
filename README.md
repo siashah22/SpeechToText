@@ -32,6 +32,7 @@ Enter path to audio file (MP3 or WAV): C:\Users\sample_audio.mp3
 
 
 Converting MP3 to WAV for better accuracy...
+
 Recognition Time: 18.04 seconds
 
 Recognized Text:
